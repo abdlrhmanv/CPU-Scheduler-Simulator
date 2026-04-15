@@ -1,0 +1,35 @@
+# Local-only notes and team docs (not shared via repo)
+/docs/
+
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+*.egg-info/
+.eggs/
+dist/
+build/
+*.egg
+.venv/
+venv/
+.env
+.env.*
+
+# Testing / coverage
+.pytest_cache/
+.coverage
+htmlcov/
+.tox/
+.mypy_cache/
+.ruff_cache/
+
+# PyInstaller / packaging
+*.spec.bak
+
+# OS / editors
+.DS_Store
+Thumbs.db
+*.swp
+*~

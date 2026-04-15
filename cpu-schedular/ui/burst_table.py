@@ -35,6 +35,7 @@ from PySide6.QtWidgets import (
 )
 from PySide6.QtCore import Qt          # Constants alignment
 from PySide6.QtGui import QColor, QFont  # For cell background colors and fonts
+from typing import Optional
 
 
 # =============================================================================
@@ -60,6 +61,7 @@ class BurstTable(QWidget):
         "Running":  QColor(102, 102, 255),
         "Ready":    QColor(255, 102, 102),
         "Finished": QColor(192, 192, 192),
+        "Waiting":  QColor(230, 230, 230),
     }
 
     def __init__(self, parent=None):
@@ -139,7 +141,13 @@ class BurstTable(QWidget):
             self._set_cell(row, 0, pid)
             self._set_cell(row, 1, str(burst))
             self._set_cell(row, 2, str(remaining))
-            self._set_cell(row, 3, state, color=self.STATE_COLORS.get(state))   #add state and assign it to its color
+            bg = self.STATE_COLORS.get(state)
+            self._set_cell(
+                row,
+                3,
+                state,
+                color=bg if bg is not None else QColor(220, 220, 220),
+            )
 
     # -------------------------------------------------------------------------
     def reset(self):
@@ -151,7 +159,7 @@ class BurstTable(QWidget):
         self._pid_to_row.clear()        # Forget all row-position mappings
 
     # -------------------------------------------------------------------------
-    def _set_cell(self, row: int, col: int, text: str, color: QColor = None):
+    def _set_cell(self, row: int, col: int, text: str, color: Optional[QColor] = None):
         """
        creates or updates a table cell. puts text inside. Add color if needed
 
@@ -165,8 +173,8 @@ class BurstTable(QWidget):
         item.setTextAlignment(
             Qt.AlignmentFlag.AlignCenter  # Center text inside each cell
         )
-        if color: #if cause it's not in all cases it's optional
-            item.setBackground(color)    # Apply background color if provided
+        if color is not None:
+            item.setBackground(color)
         self.table.setItem(row, col, item)
 
 
@@ -188,7 +196,7 @@ class MetricsView(QWidget):
         layout.addWidget(self.metrics)
 
         # During the run, update with averages of completed processes so far:
-        self.metrics.update(avg_waiting=3.5, avg_turnaround=7.0)
+        self.metrics.update_metrics(3.5, 7.0)
 
         # When the simulation ends, call set_final to lock in final values:
         self.metrics.set_final(avg_waiting=4.2, avg_turnaround=8.1)
@@ -243,15 +251,14 @@ class MetricsView(QWidget):
 
         # Store references to the value labels so we can update them later
         # (These are set inside _make_metric_box below)
-        self._waiting_value_label: QLabel = self._waiting_box.findChild(
-            QLabel, "value_label"
-        )
-        self._turnaround_value_label: QLabel = self._turnaround_box.findChild(
-            QLabel, "value_label"
-        )
+        _w = self._waiting_box.findChild(QLabel, "value_label")
+        _t = self._turnaround_box.findChild(QLabel, "value_label")
+        assert _w is not None and _t is not None
+        self._waiting_value_label = _w
+        self._turnaround_value_label = _t
 
     # -------------------------------------------------------------------------
-    def update(self, avg_waiting: float, avg_turnaround: float):
+    def update_metrics(self, avg_waiting: float, avg_turnaround: float):
         """
         Updates the displayed averages during the simulation.
         This is meant to be called whenever a process finishes (partial average).
@@ -375,7 +382,7 @@ if __name__ == "__main__":
     burst_table.update_state(fake_snapshot)
 
     # Show partial metrics (as if P3 just finished)
-    metrics_view.update(avg_waiting=2.0, avg_turnaround=6.0)
+    metrics_view.update_metrics(2.0, 6.0)
 
     window.show()
     sys.exit(app.exec())

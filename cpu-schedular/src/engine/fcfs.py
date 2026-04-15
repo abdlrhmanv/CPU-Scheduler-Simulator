@@ -1,155 +1,85 @@
-import tkinter as tk
-from tkinter import messagebox
-import time
-import threading
+# deepcopy -> copy nested dict/list structures safely so we do not mutate caller data
+from copy import deepcopy
+# typing imports -> improve readability and static checking
+from typing import List
 
-class FCFSScheduler:
-    def __init__(self, root):
-        self.root = root
-        self.root.title("CPU Scheduler - FCFS Mode")
-
-        self.processes = []  # [PID, Arrival, Burst, Remaining, Finish, TAT, WT]
-        self.current_time = 0
-        self.running = False
-        self.gantt = []  # (PID, start, end)
-
-        # GUI
-        tk.Label(root, text="Process ID:").grid(row=0, column=0)
-        self.pid_entry = tk.Entry(root)
-        self.pid_entry.grid(row=0, column=1)
-
-        tk.Label(root, text="Arrival Time:").grid(row=1, column=0)
-        self.arrival_entry = tk.Entry(root)
-        self.arrival_entry.grid(row=1, column=1)
-
-        tk.Label(root, text="Burst Time:").grid(row=2, column=0)
-        self.burst_entry = tk.Entry(root)
-        self.burst_entry.grid(row=2, column=1)
-
-        tk.Button(root, text="Add Process", command=self.add_process).grid(row=3, column=0, columnspan=2)
-        tk.Button(root, text="Start Live Scheduler", command=self.start_thread).grid(row=4, column=0, columnspan=2)
-        tk.Button(root, text="Run Instantly", command=self.run_instant).grid(row=5, column=0, columnspan=2)
-
-        self.status_label = tk.Label(root, text="Status: Waiting", fg="blue")
-        self.status_label.grid(row=6, column=0, columnspan=2)
-
-        self.table_text = tk.Text(root, height=10, width=40)
-        self.table_text.grid(row=7, column=0, columnspan=2)
-
-        self.gantt_text = tk.Text(root, height=5, width=40)
-        self.gantt_text.grid(row=8, column=0, columnspan=2)
-
-    # ----------------------
-    def add_process(self):
-        try:
-            pid = self.pid_entry.get()
-            arrival = int(self.arrival_entry.get())
-            burst = int(self.burst_entry.get())
-
-            self.processes.append([pid, arrival, burst, burst, 0, 0, 0])
-
-            messagebox.showinfo("Success", f"Process {pid} added!")
-
-            # clear fields
-            self.pid_entry.delete(0, tk.END)
-            self.arrival_entry.delete(0, tk.END)
-            self.burst_entry.delete(0, tk.END)
-
-            self.update_table()
-
-        except ValueError:
-            messagebox.showerror("Error", "Enter valid numbers.")
-
-    # ----------------------
-    def update_table(self):
-        self.table_text.delete('1.0', tk.END)
-        self.table_text.insert(tk.END, "PID | Arrival | Remaining\n")
-        self.table_text.insert(tk.END, "-"*30 + "\n")
-        for p in self.processes:
-            self.table_text.insert(tk.END, f"{p[0]} | {p[1]} | {p[3]}\n")
-
-    # ----------------------
-    def update_gantt(self):
-        self.gantt_text.delete('1.0', tk.END)
-        timeline = ""
-        times = ""
-
-        for pid, start, end in self.gantt:
-            timeline += f"| {pid} "
-            times += f"{start}   "
-
-        if self.gantt:
-            times += str(self.gantt[-1][2])
-
-        self.gantt_text.insert(tk.END, timeline + "|\n")
-        self.gantt_text.insert(tk.END, times)
-
-    # ----------------------
-    def run_scheduler(self, live=True):
-        self.running = True
-        self.processes.sort(key=lambda x: x[1])
-
-        for p in self.processes:
-            if self.current_time < p[1]:
-                idle = p[1] - self.current_time
-                if live:
-                    time.sleep(idle)
-                self.current_time += idle
-
-            start = self.current_time
-            burst = p[3]
-
-            # Update UI safely
-            self.root.after(0, lambda pid=p[0]: self.status_label.config(text=f"Running: {pid}"))
-
-            if live:
-                time.sleep(burst)
-
-            self.current_time += burst
-            p[3] = 0
-
-            end = self.current_time
-            self.gantt.append((p[0], start, end))
-
-            # Calculations
-            p[4] = end
-            p[5] = p[4] - p[1]
-            p[6] = p[5] - p[2]
-
-            # Update UI
-            self.root.after(0, self.update_table)
-            self.root.after(0, self.update_gantt)
-
-        self.root.after(0, self.calculate_averages)
-
-    # ----------------------
-    def start_thread(self):
-        if not self.running:
-            threading.Thread(target=self.run_scheduler, daemon=True).start()
-
-    # ----------------------
-    def run_instant(self):
-        if not self.running:
-            self.run_scheduler(live=False)
-
-    # ----------------------
-    def calculate_averages(self):
-        total_wt = sum(p[6] for p in self.processes)
-        total_tat = sum(p[5] for p in self.processes)
-        n = len(self.processes)
-
-        avg_wt = total_wt / n
-        avg_tat = total_tat / n
-
-        messagebox.showinfo("Results",
-                            f"Average Waiting Time: {avg_wt:.2f}\n"
-                            f"Average Turnaround Time: {avg_tat:.2f}")
-
-        self.running = False
+from .models import AlgorithmRunTuple, GanttTuple, ProcessInput
 
 
-# ----------------------
-if __name__ == "__main__":
-    root = tk.Tk()
-    app = FCFSScheduler(root)
-    root.mainloop()
+# =============================================================================
+# fcfs.py
+# -----------------------------------------------------------------------------
+# Pure FCFS engine module (no GUI code).
+#
+# Input format:
+#   processes = [{"pid": "P1", "arrival": 0, "burst": 5, "priority": None}, ...]
+#
+# Output (run_fcfs_static):
+#   - gantt_log: list[(pid, start, end)]
+#   - results:   list[dict] with per-process metrics
+#   - avg_waiting, avg_turnaround
+# =============================================================================
+
+
+def run_fcfs_static(processes: List[ProcessInput]) -> AlgorithmRunTuple:
+    """
+    Execute FCFS in static (instant) mode.
+    Returns:
+      (gantt_log, results, avg_waiting, avg_turnaround)
+    """
+    # Make a full copy of input so original UI/engine list stays unchanged.
+    procs = deepcopy(processes)
+    # FCFS order = earliest arrival first, then PID for deterministic ties.
+    procs.sort(key=lambda x: (x["arrival"], x["pid"]))
+
+    # Current simulation time.
+    t = 0
+    # Gantt timeline as tuples: (pid, start_time, end_time).
+    gantt_log: List[GanttTuple] = []
+    # Per-process final metrics.
+    results = []
+
+    # Iterate processes in FCFS order and run each one to completion.
+    for p in procs:
+        # If CPU time is behind the next arrival, CPU is idle for that gap.
+        if t < p["arrival"]:
+            # CPU idle until next arrival.
+            gantt_log.append(("IDLE", t, p["arrival"]))
+            # Jump current time forward to arrival instant.
+            t = p["arrival"]
+
+        # Process starts immediately at current simulation time.
+        start = t
+        # FCFS non-preemptive: process runs for full burst.
+        end = t + p["burst"]
+        # Add execution block to Gantt timeline.
+        gantt_log.append((p["pid"], start, end))
+        # Move global time to process finish.
+        t = end
+
+        # Turnaround = finish - arrival
+        turnaround = end - p["arrival"]
+        # Waiting = turnaround - burst
+        waiting = turnaround - p["burst"]
+
+        # Store final per-process metrics in unified shape.
+        results.append(
+            {
+                "pid": p["pid"],
+                "arrival": p["arrival"],
+                "burst": p["burst"],
+                "priority": p.get("priority"),
+                "completion": end,
+                "waiting": waiting,
+                "turnaround": turnaround,
+            }
+        )
+
+    # Average waiting over all processes.
+    avg_waiting = sum(r["waiting"] for r in results) / len(results)
+    # Average turnaround over all processes.
+    avg_turnaround = sum(r["turnaround"] for r in results) / len(results)
+
+    # Return everything needed by simulation.py/UI:
+    # timeline + per-process stats + global averages.
+    return gantt_log, results, avg_waiting, avg_turnaround
