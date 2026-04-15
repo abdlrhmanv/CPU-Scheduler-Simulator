@@ -1,50 +1,23 @@
 # =============================================================================
 # TEAM CONTRACT — READ BEFORE MODIFYING
 # -----------------------------------------------------------------------------
-# THIS FILE DEPENDS ON THE ENGINE PROVIDING A CONSISTENT STATE FORMAT.
+# THIS WIDGET ONLY DRAWS TIMELINE SEGMENTS; IT DOES NOT SCHEDULE PROCESSES.
 #
-# THE ENGINE (simulation.py) MUST PROVIDE:
+# DATA FLOW (actual codebase):
+#   - Batch: main_window passes merged timeline blocks from static_run result.
+#   - Live:  main_window replays snapshot["timeline"] each tick via add_block().
 #
-#   tick() → returns:
-#   {
-#       "time": int,              # current simulation time (0,1,2,...)
-#       "running_pid": str        # currently running process (e.g. "P1")
-#   }
+# ENGINE / SNAPSHOT RULES (simulation.py):
+#   - Timeline entries are { "pid": str, "start": int, "end": int }.
+#   - Idle CPU uses pid == "IDLE" in those blocks.
+#   - Live mode advances in whole time units; tick_seconds defaults to 1s real time.
 #
-# -----------------------------------------------------------------------------
-# REQUIRED BEHAVIOR FROM ENGINE:
-#
-# 1. TIME MUST INCREASE BY EXACTLY +1 EACH TICK
-#    (Otherwise Gantt scaling breaks)
-#
-# 2. PREEMPTION MUST HAPPEN BEFORE RETURNING STATE
-#    (Gantt assumes the returned PID is FINAL for that time unit)
-#
-# 3. IDLE CPU MUST BE REPRESENTED AS:
-#       "running_pid": "IDLE"
-#
-# 4. DO NOT RETURN None MID-SIMULATION
-#    → Only return None when simulation is FULLY COMPLETE
-#
-# -----------------------------------------------------------------------------
 # IMPORTANT FOR TEAMMATES:
+#   - Do NOT call paintEvent() manually — use update() after mutating blocks.
+#   - Do not mutate _blocks from outside except via reset() / add_block().
+#   - Scheduling logic stays in engine; this file only visualizes (pid, start, end).
 #
-# DO NOT ADD UI LOGIC TO ENGINE
-# DO NOT MODIFY gantt list FROM OUTSIDE THIS CLASS
-# DO NOT CALL paintEvent() MANUALLY
-#
-# -----------------------------------------------------------------------------
-# DEPENDENCIES:
-#
-# - main_window.py MUST call:
-#       gantt.add_block(pid, start, end)
-#
-# - Timer MUST run at:
-#       1000 ms (1 second per tick)
-#
-# -----------------------------------------------------------------------------
-# IF YOU CHANGE ENGINE OUTPUT FORMAT → UPDATE THIS FILE
-# OR GANTT WILL BREAK.
+# IF YOU CHANGE TIMELINE SHAPE IN MODELS/SIMULATION → UPDATE main_window + THIS FILE.
 #
 # =============================================================================
 

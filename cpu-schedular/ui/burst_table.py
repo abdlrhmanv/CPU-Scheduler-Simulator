@@ -1,4 +1,23 @@
 # =============================================================================
+# TEAM CONTRACT — READ BEFORE MODIFYING
+# -----------------------------------------------------------------------------
+# THIS FILE IS DISPLAY-ONLY: IT DOES NOT COMPUTE SCHEDULES.
+#
+# DATA IT EXPECTS:
+#   - `BurstTable.update_state(rows)` — each row dict has:
+#         pid, burst, remaining, state  (strings/ints as implemented)
+#   - `MetricsView.update_metrics(w, t)` and `set_final(w, t)` for averages.
+#
+# IMPORTANT FOR TEAMMATES:
+#   - Do not rename `update_metrics` — it must not clash with QWidget.update().
+#   - Colors/states are UI concerns only; engine remains unaware.
+#
+# IF YOU CHANGE ROW SHAPE → UPDATE main_window helpers that build `rows`.
+#
+# =============================================================================
+
+
+# =============================================================================
 # burst_table.py
 # -----------------------------------------------------------------------------
 # This file is responsible for TWO visual components in the GUI:

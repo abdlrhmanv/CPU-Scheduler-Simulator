@@ -1,3 +1,27 @@
+# =============================================================================
+# TEAM CONTRACT — READ BEFORE MODIFYING
+# -----------------------------------------------------------------------------
+# THIS FILE DEFINES USER INPUT; IT DOES NOT RUN THE SCHEDULER.
+#
+# OUTPUT CONTRACT (to engine via main_window):
+#   - `collect_processes()` MUST return dicts compatible with `ProcessInput`
+#     (pid, arrival, burst; optional priority when algorithm requires it).
+#   - `algorithm_key()` strings MUST match `simulation.static_run` / `start_live`
+#     dispatch keys (fcfs, sjf_np, sjf_p, priority_np, priority_p, rr).
+#
+# UI RULES:
+#   - Show quantum spinbox only for RR and preemptive priority.
+#   - Show priority column only for priority algorithms.
+#   - Raise ValueError with clear messages on bad table data (caught by main_window).
+#
+# IMPORTANT FOR TEAMMATES:
+#   - Do not embed scheduling logic here — only validation and field visibility.
+#
+# IF YOU ADD A NEW ALGORITHM TO THE COMBO → ADD IT TO ALGORITHMS AND simulation.py.
+#
+# =============================================================================
+
+
 """
 Conditional process input: algorithm choice, batch/live mode, quantum when needed,
 and a small table (PID, Arrival, Burst, Priority) with priority column hidden unless required.

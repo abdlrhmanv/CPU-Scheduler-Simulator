@@ -1,3 +1,20 @@
+# =============================================================================
+# TEAM CONTRACT — READ BEFORE MODIFYING
+# -----------------------------------------------------------------------------
+# PURE SJF MODULE (NP + PREEMPTIVE / SRTF) — NO GUI, NO GLOBAL STATE.
+#
+# INPUT:  List[ProcessInput]
+# OUTPUT: AlgorithmRunTuple (gantt tuples + basic pid/waiting/turnaround dicts)
+#
+# IMPORTANT FOR TEAMMATES:
+#   - Non-preemptive vs preemptive are separate entry points; simulation dispatches.
+#   - Remaining-time / preemption rules must stay deterministic.
+#
+# IF YOU CHANGE METRIC DICT KEYS → UPDATE simulation._compute_enriched_stats.
+#
+# =============================================================================
+
+
 # deepcopy -> protects caller input from in-place mutations during simulation
 from copy import deepcopy
 # typing imports -> clearer contracts for inputs/outputs

@@ -1,5 +1,27 @@
 #!/usr/bin/env python3
-# Shebang: run this file with python3 when executed directly (e.g. ./main.py if executable).
+# =============================================================================
+# TEAM CONTRACT — READ BEFORE MODIFYING
+# -----------------------------------------------------------------------------
+# THIS FILE IS THE ONLY SUPPORTED APPLICATION ENTRY POINT FOR THE GUI.
+#
+# REQUIRED USAGE:
+#   - Working directory MUST be `cpu-schedular/` when launching:
+#         cd cpu-schedular && python main.py
+#     (Imports expect `src/` on sys.path for `engine` and project root for `ui`.)
+#
+# QT / PLATFORM:
+#   - Do NOT import PySide6 before the Qt plugin path and (on Linux) platform
+#     env vars below are set — otherwise the app may fail to start.
+#   - Linux defaults to X11 (xcb); USE_WAYLAND=1 opts into native Wayland.
+#
+# IMPORTANT FOR TEAMMATES:
+#   - Do not move path bootstrapping out of this file without updating README.
+#   - Keep `main()` thin: build QApplication + MainWindow only.
+#
+# IF YOU CHANGE STARTUP OR IMPORT PATHS → UPDATE README “Getting started”.
+#
+# =============================================================================
+
 
 """Application entry: run from `cpu-schedular/` as `python main.py`."""
 # Module docstring: documents that the working directory must be cpu-schedular/ for imports.

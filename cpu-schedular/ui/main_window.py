@@ -1,3 +1,31 @@
+# =============================================================================
+# TEAM CONTRACT — READ BEFORE MODIFYING
+# -----------------------------------------------------------------------------
+# THIS FILE ORCHESTRATES UI ↔ ENGINE. IT OWNS NO SCHEDULING MATH.
+#
+# THE UI MUST:
+#   - Call ONLY `engine.simulation` public APIs:
+#         static_run, start_live, stop_live, pause, resume, add_process
+#   - Never import fcfs/sjf/priority/round_robin directly.
+#
+# LIVE MODE:
+#   - Engine callbacks may run on a worker thread → use TickBridge signals
+#     to touch widgets on the GUI thread only.
+#
+# GANTT / BURST:
+#   - Feed Gantt via `gantt.add_block(pid, start, end)` from engine timeline.
+#   - Feed BurstTable via `update_state(rows)`; metrics via `update_metrics` / `set_final`.
+#
+# IMPORTANT FOR TEAMMATES:
+#   - Do not block the GUI thread with long CPU work (batch static_run is OK;
+#     keep live path asynchronous via simulation’s thread).
+#   - Do not rename TickBridge signals without updating slots.
+#
+# IF YOU CHANGE ENGINE CALLBACK SHAPES → UPDATE THIS FILE AND gantt_view / burst_table.
+#
+# =============================================================================
+
+
 """
 Main window: input panel, controls, Gantt chart, burst table, metrics.
 Uses engine.simulation static_run / start_live / pause / resume / stop_live / add_process.

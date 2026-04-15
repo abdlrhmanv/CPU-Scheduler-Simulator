@@ -1,3 +1,22 @@
+# =============================================================================
+# TEAM CONTRACT — READ BEFORE MODIFYING
+# -----------------------------------------------------------------------------
+# PURE PRIORITY SCHEDULERS (NP + PREEMPTIVE) — NO GUI, NO GLOBAL STATE.
+#
+# INPUT:  List[ProcessInput] with integer priority on every process (validated).
+# OUTPUT: AlgorithmRunTuple
+#
+# PRIORITY RULE: smaller number = higher priority (document in report).
+#
+# IMPORTANT FOR TEAMMATES:
+#   - Preemptive mode uses quantum for same-priority RR; keep in sync with config.
+#   - Internal working dicts use Dict[str, Any] after deepcopy — do not leak to UI raw.
+#
+# IF YOU CHANGE TIE-BREAK OR QUEUE BEHAVIOR → UPDATE TESTS AND README.
+#
+# =============================================================================
+
+
 # deque -> efficient O(1) queue operations for ready queues.
 from collections import deque
 # deepcopy -> lets us mutate runtime fields without touching caller input.

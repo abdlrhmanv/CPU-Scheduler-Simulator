@@ -1,3 +1,20 @@
+# =============================================================================
+# TEAM CONTRACT — READ BEFORE MODIFYING
+# -----------------------------------------------------------------------------
+# PURE FCFS SCHEDULER — NO GUI, NO GLOBAL STATE.
+#
+# INPUT:  List[ProcessInput] (validated upstream by simulation).
+# OUTPUT: AlgorithmRunTuple = (gantt_log, per-process stats dicts, avg_w, avg_t)
+#
+# IMPORTANT FOR TEAMMATES:
+#   - Do not import simulation.py or ui from here (avoid circular deps).
+#   - Tie-break FCFS ordering consistently with team plan (arrival, then pid).
+#
+# IF YOU CHANGE RETURN SHAPE → UPDATE simulation._compute_enriched_stats / callers.
+#
+# =============================================================================
+
+
 # deepcopy -> copy nested dict/list structures safely so we do not mutate caller data
 from copy import deepcopy
 # typing imports -> improve readability and static checking

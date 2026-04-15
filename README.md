@@ -1,6 +1,6 @@
 # CPU Scheduler Simulator
 
-**Operating Systems (OS) course project — desktop GUI for CPU scheduling algorithms.**
+**CSE335s (UG2023) — Operating Systems · course project — desktop GUI for CPU scheduling algorithms.**
 
 A Python + PySide6 application that runs **FCFS**, **SJF (non-preemptive / preemptive)**, **Priority (non-preemptive / preemptive)**, and **Round Robin**, in **batch** (instant) or **live** (1 time unit ≈ 1 second) mode, with **Gantt chart**, **remaining-burst table**, **average waiting / turnaround** metrics, **pause / resume**, and **dynamic add process** during live runs.
 
@@ -10,7 +10,7 @@ A Python + PySide6 application that runs **FCFS**, **SJF (non-preemptive / preem
 
 This repository contains our team’s CPU scheduling simulator: a clear separation between the **scheduling engine** (`src/engine`) and the **Qt desktop UI** (`ui`). The engine exposes a small API (`static_run`, live session with `start_live` / `stop_live` / `pause` / `resume` / `add_process`) consumed by the main window.
 
-**Course context:** Ain Shams University — Computer Engineering / OS curriculum.
+**Course:** **CSE335s (UG2023) — Operating Systems** · Ain Shams University — Computer and Systems Engineering.
 
 ---
 
@@ -64,7 +64,7 @@ Project/
 | **Abdlrhman Hisham Ismail** | 2300343 | `models.py`, `simulation.py`, tests, `input_panel.py`, `main_window,py`, `main.py` |
 | **Mena Moheb AbdElshaheed** | 2300700 | FCFS (`fcfs.py`) |
 | **Mina Hany Eid** | 2300434 | Round Robin (`round_robin.py`) |
-| **Mark Amir** | — | Priority (`priority.py`) |
+| **Mark Amir Ayad** | 2300453 | Priority (`priority.py`) |
 | **Abdallah Ragaae Ahmed** | 2301025 | SJF (`sjf.py`) |
 | **Mariam Maged** | — | Gantt view (`gantt_view.py`) |
 | **Asmaa Salah** | — | Burst table + metrics (`burst_table.py`) |
@@ -138,7 +138,7 @@ Happy to discuss OS, scheduling, or this codebase — adjust links as needed for
 
 ## License & course use
 
-Provided for educational use in the OS course. Adapt usage and attribution per your instructor’s requirements.
+Provided for educational use in **CSE335s (UG2023) — Operating Systems**. Adapt usage and attribution per your instructor’s requirements.
 
 ---
 

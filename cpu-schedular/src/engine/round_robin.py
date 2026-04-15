@@ -1,3 +1,20 @@
+# =============================================================================
+# TEAM CONTRACT — READ BEFORE MODIFYING
+# -----------------------------------------------------------------------------
+# PURE ROUND ROBIN (STATIC) — NO GUI, NO GLOBAL STATE.
+#
+# INPUT:  List[ProcessInput], quantum > 0
+# OUTPUT: AlgorithmRunTuple
+#
+# IMPORTANT FOR TEAMMATES:
+#   - Quantum must match UI/config defaults documented in README.
+#   - Idle intervals appear as ("IDLE", start, end) in gantt_log when applicable.
+#
+# IF YOU CHANGE SLICING OR QUEUE ORDER → RE-RUN tests/test_engine_simulation.py.
+#
+# =============================================================================
+
+
 # deque -> efficient O(1) queue operations from both ends (perfect for RR ready queue)
 from collections import deque
 # deepcopy -> keeps caller's data intact while we mutate runtime fields

@@ -1,3 +1,21 @@
+# =============================================================================
+# TEAM CONTRACT — READ BEFORE MODIFYING
+# -----------------------------------------------------------------------------
+# THIS MODULE DEFINES THE JSON-LIKE CONTRACTS (TypedDicts) FOR THE WHOLE STACK.
+#
+# RULES:
+#   - ProcessInput, StaticRunResult, LiveTickSnapshot, etc. are authoritative.
+#   - Changing a key or type here REQUIRES updates in simulation, algorithms, UI, tests.
+#
+# IMPORTANT FOR TEAMMATES:
+#   - Prefer adding optional keys with NotRequired rather than breaking callers.
+#   - Do not import simulation or ui from this file (types only / dataclass helper).
+#
+# IF YOU RENAME OR REMOVE A FIELD → SEARCH THE REPO AND FIX ALL REFERENCES.
+#
+# =============================================================================
+
+
 """
 Shared data models for the CPU scheduler engine.
 

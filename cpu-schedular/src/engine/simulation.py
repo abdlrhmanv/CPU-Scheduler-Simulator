@@ -1,3 +1,30 @@
+# =============================================================================
+# TEAM CONTRACT — READ BEFORE MODIFYING
+# -----------------------------------------------------------------------------
+# THIS MODULE IS THE ONLY UI-FACING ENGINE API. NO PySide / Qt IMPORTS HERE.
+#
+# PUBLIC ENTRY POINTS:
+#   - static_run(processes, algorithm, config?)  → full batch result
+#   - start_live(..., on_tick, on_finish)      → threaded live run
+#   - stop_live, pause, resume, add_process    → live session control
+#
+# CALLBACK SHAPES (live):
+#   - on_tick(snapshot: LiveTickSnapshot) — see models.py
+#   - on_finish(result: LiveFinalResult)
+#
+# REQUIRED BEHAVIOR:
+#   - Validate/normalize processes early; raise ValueError on bad input.
+#   - Timeline uses "IDLE" for gaps; merge for UI is handled here or in UI.
+#
+# IMPORTANT FOR TEAMMATES:
+#   - Do not import ui/* from this file.
+#   - Algorithm logic stays in fcfs/sjf/priority/round_robin; this file dispatches.
+#
+# IF YOU CHANGE StaticRunResult / LiveTickSnapshot → UPDATE models.py AND UI.
+#
+# =============================================================================
+
+
 # deepcopy -> protects caller-owned data from in-place mutation.
 from copy import deepcopy
 # threading -> live simulation runs on a background worker thread.
