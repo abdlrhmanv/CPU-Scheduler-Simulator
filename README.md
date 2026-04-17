@@ -61,7 +61,7 @@ Project/
 
 | Member | Student ID | Main contribution |
 |--------|------------|---------------------|
-| **Abdlrhman Hisham Ismail** | 2300343 | `models.py`, `simulation.py`, tests, `input_panel.py`, `main_window,py`, `main.py` |
+| **Abdlrhman Hisham Ismail** | 2300343 | `models.py`, `simulation.py`, tests, `input_panel.py`, `main_window.py`, `main.py` |
 | **Mena Moheb AbdElshaheed** | 2300700 | FCFS (`fcfs.py`) |
 | **Mina Hany Eid** | 2300434 | Round Robin (`round_robin.py`) |
 | **Mark Amir Ayad** | 2300453 | Priority (`priority.py`) |

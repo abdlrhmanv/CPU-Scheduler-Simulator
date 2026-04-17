@@ -27,6 +27,7 @@ htmlcov/
 
 # PyInstaller / packaging
 *.spec.bak
+*.exe
 
 # OS / editors
 .DS_Store
